@@ -1,34 +1,21 @@
 #!/bin/bash -
-#===============================================================================
-#
-#          FILE: test-servant.sh
-#
-#         USAGE: ./test-servant.sh
-#
-#   DESCRIPTION:
-#
-#       OPTIONS: ---
-#  REQUIREMENTS: ghc, cabal
-#          BUGS: ---
-#         NOTES: ---
-#        AUTHOR: YOUR NAME (),
-#  ORGANIZATION:
-#       CREATED: 06.09.2015 00:35
-#      REVISION:  ---
-#===============================================================================
 
-set -o nounset                              # Treat unset variables as an error
+set -o nounset
 set -o errexit
 
-HOME="/home/servant-tests"
+TEMP_DIR=$(mktemp -d)
+function finish {
+  rm -rf "$TEMP_DIR"
+}
+trap finish EXIT
+
 REPO="https://github.com/haskell-servant/servant.git"
 
-cd "$HOME"
-[ -d "$HOME/servant/.git" ] || git clone "$REPO"
+cd "$TEMP_DIR"
+pwd
+git clone "$REPO"
+cd servant
 
-cd "$HOME/servant"
-cabal sandbox delete
+# building and testing
 cabal update
-
 ./scripts/test-all.sh
-
